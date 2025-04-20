@@ -22,8 +22,7 @@ import {
   useTheme,
   useMediaQuery,
   Card,
-  CardContent,
-  alpha
+  CardContent
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 
@@ -39,7 +38,7 @@ const FoodDatabasePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [categories, setCategories] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
 
@@ -135,11 +134,11 @@ const FoodDatabasePage = () => {
   // Get a visual indicator for sort direction
   const getSortDirectionIcon = (name) => {
     if (sortConfig.key !== name) {
-      return <Icon icon="mdi:sort" style={{ opacity: 0.3, width: 18, height: 18 }} />;
+      return <Icon icon="mdi:sort" style={{ opacity: 0.6, width: 20, height: 20 }} />;
     }
     return sortConfig.direction === 'asc' 
-      ? <Icon icon="mdi:sort-ascending" style={{ width: 18, height: 18 }} />
-      : <Icon icon="mdi:sort-descending" style={{ width: 18, height: 18 }} />;
+      ? <Icon icon="mdi:sort-ascending" style={{ width: 20, height: 20, color: theme.palette.primary.main }} />
+      : <Icon icon="mdi:sort-descending" style={{ width: 20, height: 20, color: theme.palette.secondary.main }} />;
   };
 
   // Get nutritional metrics color based on value (high, medium, low)
@@ -259,7 +258,7 @@ const FoodDatabasePage = () => {
         <Box sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Icon 
-              icon="mdi:food-apple-outline" 
+              icon="mdi:nutrition" 
               style={{ 
                 color: theme.palette.primary.main, 
                 width: isMobile ? 32 : 48, 
@@ -332,7 +331,7 @@ const FoodDatabasePage = () => {
               <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <Icon 
-                    icon="mdi:database" 
+                    icon="mdi:database-search" 
                     style={{ width: 24, height: 24, color: theme.palette.primary.main, marginRight: 8 }} 
                   />
                   <Typography variant="h6" component="div" fontWeight={600}>
@@ -453,47 +452,53 @@ const FoodDatabasePage = () => {
         <TableContainer>
           <Table stickyHeader>
             <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', width: '35%' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => requestSort('name')}>
-                    Food Item
+              <TableRow sx={{ 
+                backgroundColor: theme.palette.primary.light,
+                '& .MuiTableCell-root': {
+                  backgroundColor: theme.palette.primary.light,
+                  color: theme.palette.primary.main
+                }
+              }}>
+                <TableCell sx={{ fontWeight: 'bold', width: '35%', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between' }} onClick={() => requestSort('name')}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Food Item</Typography>
                     {getSortDirectionIcon('name')}
                   </Box>
                 </TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => requestSort('type')}>
-                    Category
+                <TableCell sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between' }} onClick={() => requestSort('type')}>
+                    <Typography sx={{ fontWeight: 'bold' }}>Category</Typography>
                     {getSortDirectionIcon('type')}
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('cal')}>
-                    Calories
-                    {getSortDirectionIcon('cal')}
+                    <Typography sx={{ fontWeight: 'bold' }}>Calories</Typography>
+                    <Box sx={{ ml: 1 }}>{getSortDirectionIcon('cal')}</Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('protien')}>
-                    Protein
-                    {getSortDirectionIcon('protien')}
+                    <Typography sx={{ fontWeight: 'bold' }}>Protein</Typography>
+                    <Box sx={{ ml: 1 }}>{getSortDirectionIcon('protien')}</Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('carbs')}>
-                    Carbs
-                    {getSortDirectionIcon('carbs')}
+                    <Typography sx={{ fontWeight: 'bold' }}>Carbs</Typography>
+                    <Box sx={{ ml: 1 }}>{getSortDirectionIcon('carbs')}</Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('fat')}>
-                    Fat
-                    {getSortDirectionIcon('fat')}
+                    <Typography sx={{ fontWeight: 'bold' }}>Fat</Typography>
+                    <Box sx={{ ml: 1 }}>{getSortDirectionIcon('fat')}</Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('fiber')}>
-                    Fiber
-                    {getSortDirectionIcon('fiber')}
+                    <Typography sx={{ fontWeight: 'bold' }}>Fiber</Typography>
+                    <Box sx={{ ml: 1 }}>{getSortDirectionIcon('fiber')}</Box>
                   </Box>
                 </TableCell>
               </TableRow>
@@ -515,7 +520,6 @@ const FoodDatabasePage = () => {
                     </TableCell>
                     <TableCell>
                       <Chip 
-                        icon={<Icon icon={getFoodTypeIcon(food.type)} style={{ width: 16, height: 16 }} />}
                         label={food.type} 
                         size="small"
                         sx={{ 
@@ -599,7 +603,7 @@ const FoodDatabasePage = () => {
         
         
         <TablePagination
-          rowsPerPageOptions={[10, 25, 50, 100]}
+          rowsPerPageOptions={[25, 50, 100]}
           component="div"
           count={filteredFoods.length}
           rowsPerPage={rowsPerPage}

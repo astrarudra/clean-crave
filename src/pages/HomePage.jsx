@@ -214,21 +214,41 @@ const HomePage = () => {
               sx={{
                 display: { xs: 'none', md: 'flex' },
                 justifyContent: 'center',
+                alignItems: 'center'
               }}
             >
               <Box
-                component="img"
-                src="/images/hero-image.png"
-                alt="Healthy eating"
                 sx={{
-                  maxWidth: '100%',
-                  height: 'auto',
-                  maxHeight: '400px',
-                  borderRadius: '10px',
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+                  position: 'relative',
+                  width: '300px',
+                  height: '300px',
+                  display: 'flex',
+                  justifyContent: 'center', 
+                  alignItems: 'center',
                   animation: 'float 5s ease-in-out infinite',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    zIndex: 0
+                  }
                 }}
-              />
+              >
+                <Icon 
+                  icon="mdi:food-apple-outline" 
+                  style={{ 
+                    width: '180px', 
+                    height: '180px', 
+                    color: 'white',
+                    filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))',
+                    position: 'relative',
+                    zIndex: 1
+                  }} 
+                />
+              </Box>
             </Grid>
           </Grid>
         </Container>

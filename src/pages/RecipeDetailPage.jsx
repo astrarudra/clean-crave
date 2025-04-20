@@ -7,7 +7,6 @@ import {
     Paper,
     Chip,
     Divider,
-    Grid,
     Button,
     CircularProgress,
     List,
@@ -21,18 +20,17 @@ import {
     StepLabel,
     StepContent,
     useTheme,
-    Avatar
+    Avatar,
+    LinearProgress,
+    IconButton
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'; // Calories
-import EggIcon from '@mui/icons-material/Egg'; // Protein
-import GrassIcon from '@mui/icons-material/Grass'; // Carbs
-import OilBarrelIcon from '@mui/icons-material/OilBarrel'; // Fats
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Icon } from '@iconify/react';
+import { alpha } from '@mui/material/styles';
 
 /**
  * Page component for displaying the details of a single recipe.
@@ -46,7 +44,7 @@ const RecipeDetailPage = () => {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeStep, setActiveStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState({});
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -72,16 +70,12 @@ const RecipeDetailPage = () => {
     fetchRecipe();
   }, [recipeId]);
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
+  // Toggle step completion
+  const toggleStepCompletion = (stepIndex) => {
+    setCompletedSteps(prev => ({
+      ...prev,
+      [stepIndex]: !prev[stepIndex]
+    }));
   };
 
   // Loading state
@@ -202,7 +196,7 @@ const RecipeDetailPage = () => {
         <Box 
           sx={{ 
             width: '100%', 
-            height: 280, 
+            height: 600, 
             borderRadius: 2, 
             overflow: 'hidden',
             mb: 3,
@@ -285,9 +279,9 @@ const RecipeDetailPage = () => {
           )}
           
           {/* Meta Info Grid: Time, Servings, Meal Type */}
-          <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
             {/* Cook Time */}
-            <Grid item xs={6} sm={4}>
+            <Box sx={{ flex: { xs: '0 0 calc(50% - 8px)', sm: '0 0 calc(33.333% - 11px)' } }}>
               <Card 
                 elevation={0} 
                 sx={{ 
@@ -310,10 +304,10 @@ const RecipeDetailPage = () => {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
             
             {/* Servings */}
-            <Grid item xs={6} sm={4}>
+            <Box sx={{ flex: { xs: '0 0 calc(50% - 8px)', sm: '0 0 calc(33.333% - 11px)' } }}>
               <Card 
                 elevation={0} 
                 sx={{ 
@@ -336,11 +330,11 @@ const RecipeDetailPage = () => {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
             
             {/* Meal Type */}
             {recipe.mealType && (
-            <Grid item xs={12} sm={4}>
+            <Box sx={{ flex: { xs: '0 0 100%', sm: '0 0 calc(33.333% - 11px)' } }}>
               <Card 
                 elevation={0} 
                 sx={{ 
@@ -363,9 +357,9 @@ const RecipeDetailPage = () => {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
             )}
-          </Grid>
+          </Box>
           
           {/* Nutritional Info Cards */}
           {recipe.nutrition && Object.keys(recipe.nutrition).length > 0 && (
@@ -393,125 +387,153 @@ const RecipeDetailPage = () => {
                 Nutrition (per serving)
               </Typography>
               
-              <Grid container spacing={2}>
+              <Box sx={{ display: 'flex', gap: 2 }}>
                 {recipe.nutrition.calories !== undefined && (
-                  <Grid item xs={6} sm={3}>
-                    <Card 
-                      sx={{ 
-                        bgcolor: `${theme.palette.error.main}10`, 
-                        height: '100%',
-                        border: `1px solid ${theme.palette.error.light}`
-                      }}
-                      elevation={0}
-                    >
-                      <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                          <LocalFireDepartmentIcon sx={{ color: theme.palette.error.main, mr: 1, fontSize: '1.2rem' }} />
-                          <Typography color="error.main" variant="body2" fontWeight={500}>
-                            Calories
-                          </Typography>
-                        </Box>
-                        <Typography variant="h6" fontWeight={700} sx={{ ml: 0.5 }}>
-                          {recipe.nutrition.calories} kcal
+                  <Card 
+                    sx={{ 
+                      bgcolor: `${theme.palette.error.main}10`, 
+                      border: `1px solid ${theme.palette.error.light}`,
+                      flex: 1,
+                      minWidth: '100px'
+                    }}
+                    elevation={0}
+                  >
+                    <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                        <Icon 
+                          icon="mdi:fire" 
+                          style={{ 
+                            marginRight: 8, 
+                            color: theme.palette.error.main,
+                            width: 20,
+                            height: 20
+                          }} 
+                        />
+                        <Typography color="error.main" variant="body2" fontWeight={500}>
+                          Calories
                         </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
+                      </Box>
+                      <Typography variant="h6" fontWeight={700} sx={{ ml: 0.5 }}>
+                        {recipe.nutrition.calories} kcal
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 )}
                 
                 {recipe.nutrition.protein !== undefined && (
-                  <Grid item xs={6} sm={3}>
-                    <Card 
-                      sx={{ 
-                        bgcolor: `${theme.palette.success.main}10`, 
-                        height: '100%',
-                        border: `1px solid ${theme.palette.success.light}`
-                      }}
-                      elevation={0}
-                    >
-                      <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                          <EggIcon sx={{ color: theme.palette.success.main, mr: 1, fontSize: '1.2rem' }} />
-                          <Typography color="success.main" variant="body2" fontWeight={500}>
-                            Protein
-                          </Typography>
-                        </Box>
-                        <Typography variant="h6" fontWeight={700} sx={{ ml: 0.5 }}>
-                          {recipe.nutrition.protein}g
+                  <Card 
+                    sx={{ 
+                      bgcolor: `${theme.palette.success.main}10`, 
+                      border: `1px solid ${theme.palette.success.light}`,
+                      flex: 1,
+                      minWidth: '100px'
+                    }}
+                    elevation={0}
+                  >
+                    <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                        <Icon 
+                          icon="openmoji:meat-on-bone" 
+                          style={{ 
+                            marginRight: 8, 
+                            color: theme.palette.success.main,
+                            width: 20,
+                            height: 20
+                          }} 
+                        />
+                        <Typography color="success.main" variant="body2" fontWeight={500}>
+                          Protein
                         </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
+                      </Box>
+                      <Typography variant="h6" fontWeight={700} sx={{ ml: 0.5 }}>
+                        {recipe.nutrition.protein}g
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 )}
                 
                 {recipe.nutrition.carbs !== undefined && (
-                  <Grid item xs={6} sm={3}>
-                    <Card 
-                      sx={{ 
-                        bgcolor: `${theme.palette.warning.main}10`, 
-                        height: '100%',
-                        border: `1px solid ${theme.palette.warning.light}`
-                      }}
-                      elevation={0}
-                    >
-                      <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                          <GrassIcon sx={{ color: theme.palette.warning.main, mr: 1, fontSize: '1.2rem' }} />
-                          <Typography color="warning.main" variant="body2" fontWeight={500}>
-                            Carbs
-                          </Typography>
-                        </Box>
-                        <Typography variant="h6" fontWeight={700} sx={{ ml: 0.5 }}>
-                          {recipe.nutrition.carbs}g
+                  <Card 
+                    sx={{ 
+                      bgcolor: `${theme.palette.warning.main}10`, 
+                      border: `1px solid ${theme.palette.warning.light}`,
+                      flex: 1,
+                      minWidth: '100px'
+                    }}
+                    elevation={0}
+                  >
+                    <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                        <Icon 
+                          icon="noto:bread" 
+                          style={{ 
+                            marginRight: 8, 
+                            color: theme.palette.warning.main,
+                            width: 20,
+                            height: 20
+                          }} 
+                        />
+                        <Typography color="warning.main" variant="body2" fontWeight={500}>
+                          Carbs
                         </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
+                      </Box>
+                      <Typography variant="h6" fontWeight={700} sx={{ ml: 0.5 }}>
+                        {recipe.nutrition.carbs}g
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 )}
                 
                 {recipe.nutrition.fat !== undefined && (
-                  <Grid item xs={6} sm={3}>
-                    <Card 
-                      sx={{ 
-                        bgcolor: `${theme.palette.info.main}10`, 
-                        height: '100%',
-                        border: `1px solid ${theme.palette.info.light}`
-                      }}
-                      elevation={0}
-                    >
-                      <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                          <OilBarrelIcon sx={{ color: theme.palette.info.main, mr: 1, fontSize: '1.2rem' }} />
-                          <Typography color="info.main" variant="body2" fontWeight={500}>
-                            Fat
-                          </Typography>
-                        </Box>
-                        <Typography variant="h6" fontWeight={700} sx={{ ml: 0.5 }}>
-                          {recipe.nutrition.fat}g
+                  <Card 
+                    sx={{ 
+                      bgcolor: `${theme.palette.info.main}10`, 
+                      border: `1px solid ${theme.palette.info.light}`,
+                      flex: 1,
+                      minWidth: '100px'
+                    }}
+                    elevation={0}
+                  >
+                    <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                        <Icon 
+                          icon="fluent-emoji:cheese-wedge" 
+                          style={{ 
+                            marginRight: 8, 
+                            color: theme.palette.info.main,
+                            width: 20,
+                            height: 20
+                          }} 
+                        />
+                        <Typography color="info.main" variant="body2" fontWeight={500}>
+                          Fat
                         </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
+                      </Box>
+                      <Typography variant="h6" fontWeight={700} sx={{ ml: 0.5 }}>
+                        {recipe.nutrition.fat}g
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 )}
-              </Grid>
+              </Box>
             </Box>
           )}
         </Box>
       </Paper>
 
       {/* Recipe Content Grid */}
-      <Grid container spacing={3}>
-        {/* Left Column: Ingredients */}
-        <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        {/* Ingredients Card */}
+        <Box>
           <Paper 
             elevation={2} 
             sx={{ 
               p: 3, 
               borderRadius: 2, 
-              mb: 3, 
-              flexGrow: 1,
+              mb: 3,
               position: 'relative',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              width: '100%'
             }}
           >
             {/* Decoration */}
@@ -552,104 +574,106 @@ const RecipeDetailPage = () => {
                 Ingredients
               </Typography>
               
-              {/* Main Ingredients List */}
-              <List sx={{ width: '100%', bgcolor: 'background.paper', py: 0 }}>
-                {mainIngredients.map((ingredient, index) => (
-                  <ListItem 
-                    key={`${ingredient.name}-${index}`}
-                    sx={{ 
-                      px: 0, 
-                      py: 0.7,
-                      borderBottom: index < mainIngredients.length - 1 ? `1px solid ${theme.palette.divider}` : 'none'
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 32 }}>
-                      <FiberManualRecordIcon sx={{ fontSize: '0.6rem', color: theme.palette.primary.main }} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={
-                        <Typography variant="body1">
-                          {ingredient.quantity && ingredient.quantity !== 0 ? `${ingredient.quantity} ` : ''}
-                          {ingredient.unit && ingredient.unit !== 'to taste' ? `${ingredient.unit} ` : ''}
-                          <strong>{ingredient.name}</strong>
-                          {ingredient.preparation ? `, ${ingredient.preparation}` : ''}
-                          {ingredient.notes ? ` (${ingredient.notes})` : ''}
-                          {ingredient.optional ? ' (optional)' : ''}
-                        </Typography>
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
-              
-              {/* Toppings/Garnishes Section */}
-              {toppings && toppings.length > 0 && (
-                <>
-                  <Divider sx={{ my: 2 }} />
-                  
-                  <Typography 
-                    variant="subtitle1" 
-                    fontWeight={600} 
-                    sx={{ 
-                      display: 'flex', 
-                      alignItems: 'center',
-                      mb: 1.5,
-                      mt: 2
-                    }}
-                  >
-                    <Icon 
-                      icon="mdi:silverware-fork-knife" 
-                      style={{ 
-                        marginRight: 8, 
-                        color: theme.palette.secondary.main,
-                        width: 18,
-                        height: 18
-                      }} 
-                    />
-                    Toppings & Garnishes
-                  </Typography>
-                  
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                {/* Main Ingredients Column */}
+                <Box sx={{ flex: { xs: '0 0 100%', md: '0 0 calc(50% - 8px)' } }}>
                   <List sx={{ width: '100%', bgcolor: 'background.paper', py: 0 }}>
-                    {toppings.map((topping, index) => (
+                    {mainIngredients.map((ingredient, index) => (
                       <ListItem 
-                        key={`topping-${index}`}
+                        key={`${ingredient.name}-${index}`}
                         sx={{ 
                           px: 0, 
                           py: 0.7,
-                          borderBottom: index < toppings.length - 1 ? `1px dashed ${theme.palette.divider}` : 'none'
+                          borderBottom: index < mainIngredients.length - 1 ? `1px solid ${theme.palette.divider}` : 'none'
                         }}
                       >
                         <ListItemIcon sx={{ minWidth: 32 }}>
-                          <FiberManualRecordIcon sx={{ fontSize: '0.6rem', color: theme.palette.secondary.main }} />
+                          <FiberManualRecordIcon sx={{ fontSize: '0.6rem', color: theme.palette.primary.main }} />
                         </ListItemIcon>
                         <ListItemText
                           primary={
                             <Typography variant="body1">
-                              {topping.quantity && topping.quantity !== 0 ? `${topping.quantity} ` : ''}
-                              {topping.unit && topping.unit !== 'to taste' ? `${topping.unit} ` : ''}
-                              <strong>{topping.name}</strong>
-                              {topping.preparation ? `, ${topping.preparation}` : ''}
+                              {ingredient.quantity && ingredient.quantity !== 0 ? `${ingredient.quantity} ` : ''}
+                              {ingredient.unit && ingredient.unit !== 'to taste' ? `${ingredient.unit} ` : ''}
+                              <strong>{ingredient.name}</strong>
+                              {ingredient.preparation ? `, ${ingredient.preparation}` : ''}
+                              {ingredient.notes ? ` (${ingredient.notes})` : ''}
+                              {ingredient.optional ? ' (optional)' : ''}
                             </Typography>
                           }
                         />
                       </ListItem>
                     ))}
                   </List>
-                </>
-              )}
+                </Box>
+                
+                {/* Toppings Column */}
+                {toppings && toppings.length > 0 && (
+                  <Box sx={{ flex: { xs: '0 0 100%', md: '0 0 calc(50% - 8px)' } }}>
+                    <Typography 
+                      variant="subtitle1" 
+                      fontWeight={600} 
+                      sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center',
+                        mb: 1
+                      }}
+                    >
+                      <Icon 
+                        icon="mdi:silverware-fork-knife" 
+                        style={{ 
+                          marginRight: 8, 
+                          color: theme.palette.secondary.main,
+                          width: 18,
+                          height: 18
+                        }} 
+                      />
+                      Toppings & Garnishes
+                    </Typography>
+                    
+                    <List sx={{ width: '100%', bgcolor: 'background.paper', py: 0 }}>
+                      {toppings.map((topping, index) => (
+                        <ListItem 
+                          key={`topping-${index}`}
+                          sx={{ 
+                            px: 0, 
+                            py: 0.7,
+                            borderBottom: index < toppings.length - 1 ? `1px dashed ${theme.palette.divider}` : 'none'
+                          }}
+                        >
+                          <ListItemIcon sx={{ minWidth: 32 }}>
+                            <FiberManualRecordIcon sx={{ fontSize: '0.6rem', color: theme.palette.secondary.main }} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              <Typography variant="body1">
+                                {topping.quantity && topping.quantity !== 0 ? `${topping.quantity} ` : ''}
+                                {topping.unit && topping.unit !== 'to taste' ? `${topping.unit} ` : ''}
+                                <strong>{topping.name}</strong>
+                                {topping.preparation ? `, ${topping.preparation}` : ''}
+                              </Typography>
+                            }
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+              </Box>
             </Box>
           </Paper>
-        </Grid>
+        </Box>
 
-        {/* Right Column: Instructions */}
-        <Grid item xs={12} md={8}>
+        {/* Instructions Card */}
+        <Box>
           <Paper 
             elevation={2} 
             sx={{ 
               p: 3, 
               borderRadius: 2,
               position: 'relative',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              width: '100%'
             }}
           >
             {/* Decoration */}
@@ -690,79 +714,114 @@ const RecipeDetailPage = () => {
                 Instructions
               </Typography>
               
-              {/* Stepper for Instructions */}
-              <Stepper 
-                activeStep={activeStep} 
-                orientation="vertical"
-                sx={{ 
-                  '& .MuiStepConnector-line': {
-                    minHeight: 20,
-                    border: `1px solid ${theme.palette.divider}`
-                  }
-                }}
-              >
-                {recipe.instructions.map((instruction, index) => (
-                  <Step key={index} completed={activeStep > index}>
-                    <StepLabel
-                      StepIconProps={{
-                        icon: instruction.step,
-                        active: activeStep === index,
-                        completed: activeStep > index
-                      }}
-                    >
-                      <Typography variant="subtitle1" fontWeight={600}>
-                        Step {instruction.step}
-                      </Typography>
-                    </StepLabel>
-                    <StepContent>
-                      <Typography variant="body1" color="text.secondary">
-                        {instruction.description}
-                      </Typography>
-                      <Box sx={{ mt: 2, mb: 1, display: 'flex', gap: 1 }}>
-                        <Button
-                          variant="contained"
-                          onClick={handleNext}
-                          size="small"
-                          sx={{ mr: 1 }}
-                        >
-                          {index === recipe.instructions.length - 1 ? 'Finish' : 'Next'}
-                        </Button>
-                        <Button
-                          disabled={index === 0}
-                          onClick={handleBack}
-                          size="small"
-                          variant="outlined"
-                        >
-                          Back
-                        </Button>
-                      </Box>
-                    </StepContent>
-                  </Step>
-                ))}
-              </Stepper>
+              {/* Progress Bar */}
+              <Box sx={{ mb: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Progress
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600} color="primary.main">
+                    {Object.values(completedSteps).filter(Boolean).length} of {recipe.instructions.length} steps
+                  </Typography>
+                </Box>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={(Object.values(completedSteps).filter(Boolean).length / recipe.instructions.length) * 100}
+                  sx={{ 
+                    height: 8, 
+                    borderRadius: 4,
+                    '& .MuiLinearProgress-bar': {
+                      borderRadius: 4,
+                      backgroundColor: theme.palette.success.main,
+                      transition: 'transform 0.4s ease'
+                    },
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1)
+                  }} 
+                />
+              </Box>
               
-              {activeStep === recipe.instructions.length && (
-                <Box sx={{ mt: 3, mb: 1, p: 2, bgcolor: `${theme.palette.success.main}10`, borderRadius: 1 }}>
-                  <Typography 
-                    sx={{ 
-                      display: 'flex', 
-                      alignItems: 'center',
-                      fontWeight: 600,
-                      color: theme.palette.success.dark
+              {/* Instructions List */}
+              <List sx={{ width: '100%', py: 0 }}>
+                {recipe.instructions.map((instruction, index) => (
+                  <Paper
+                    key={index}
+                    elevation={0}
+                    onClick={() => toggleStepCompletion(index)}
+                    sx={{
+                      mb: 2,
+                      p: 2,
+                      cursor: 'pointer',
+                      borderRadius: 1,
+                      transition: 'all 0.2s ease',
+                      border: `1px solid ${completedSteps[index] ? theme.palette.success.main : theme.palette.divider}`,
+                      backgroundColor: completedSteps[index]
+                        ? alpha(theme.palette.success.light, 0.15)
+                        : alpha(theme.palette.primary.light, 0.05),
+                      '&:hover': {
+                        boxShadow: theme.shadows[2],
+                        borderColor: completedSteps[index]
+                          ? theme.palette.success.main
+                          : theme.palette.primary.main
+                      }
                     }}
                   >
-                    <CheckCircleIcon sx={{ mr: 1, color: theme.palette.success.main }} />
-                    All steps completed - enjoy your meal!
-                  </Typography>
-                  <Button onClick={handleReset} sx={{ mt: 1 }} size="small">
-                    Reset Steps
-                  </Button>
-                </Box>
-              )}
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                      <Avatar 
+                        sx={{ 
+                          width: 32, 
+                          height: 32, 
+                          fontSize: '1rem',
+                          fontWeight: 600,
+                          mr: 2,
+                          bgcolor: completedSteps[index]
+                            ? theme.palette.success.main 
+                            : theme.palette.primary.light
+                        }}
+                      >
+                        {completedSteps[index] ? <CheckCircleIcon fontSize="small" /> : instruction.step}
+                      </Avatar>
+                      <Box>
+                        <Typography 
+                          variant="subtitle1" 
+                          fontWeight={600}
+                          sx={{ 
+                            textDecoration: completedSteps[index] ? 'line-through' : 'none',
+                            color: completedSteps[index] ? theme.palette.text.secondary : theme.palette.text.primary,
+                            mb: 1
+                          }}
+                        >
+                          Step {instruction.step}
+                        </Typography>
+                        <Typography 
+                          variant="body1" 
+                          color={completedSteps[index] ? 'text.disabled' : 'text.secondary'}
+                          sx={{ textDecoration: completedSteps[index] ? 'line-through' : 'none' }}
+                        >
+                          {instruction.description}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Paper>
+                ))}
+              </List>
+              
+              <Box sx={{ mt: 3, mb: 1, p: 2, bgcolor: `${theme.palette.success.main}10`, borderRadius: 1 }}>
+                <Typography 
+                  sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    fontWeight: 600,
+                    color: theme.palette.success.dark
+                  }}
+                >
+                  <CheckCircleIcon sx={{ mr: 1, color: theme.palette.success.main }} />
+                  Click on each step to mark it as completed!
+                </Typography>
+              </Box>
             </Box>
           </Paper>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
       
       {/* Recipe Rating */}
       {recipe.rating && (

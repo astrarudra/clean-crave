@@ -190,7 +190,7 @@ const EducationDetailPage = () => {
 
   return (
     <Container maxWidth="md" sx={{ py: 3, mb: 6 }}>
-      <Box my={3}>
+      <Box>
         <Button 
           variant="outlined" 
           startIcon={<ArrowBackIcon />} 
@@ -278,22 +278,6 @@ const EducationDetailPage = () => {
         </Box>
         
         <Box sx={{ position: 'relative', zIndex: 1 }}>
-          {/* Category Badge */}
-          {category && (
-            <Chip
-              icon={<Icon icon={categoryData.icon} />}
-              label={category}
-              size="small"
-              sx={{
-                mb: 2,
-                bgcolor: `${categoryData.color}20`,
-                color: categoryData.color,
-                borderColor: categoryData.color,
-                fontWeight: 500,
-                border: '1px solid'
-              }}
-            />
-          )}
           
           <Typography 
             variant="h1" 
@@ -303,7 +287,8 @@ const EducationDetailPage = () => {
               fontSize: { xs: '2rem', md: '2.5rem' },
               fontWeight: 700,
               lineHeight: 1.2,
-              mb: 2
+              mb: 2,
+              mt: 2
             }}
           >
             {title}
@@ -353,7 +338,8 @@ const EducationDetailPage = () => {
           <Paper 
             elevation={2} 
             sx={{ 
-              p: { xs: 2, md: 4 }, 
+              px: 4,
+              pb: 4,
               borderRadius: 2,
               position: 'relative',
               overflow: 'hidden'

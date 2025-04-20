@@ -1,6 +1,5 @@
 import React from 'react';
 import { 
-  Grid, 
   Box, 
   Typography, 
   Divider,
@@ -63,10 +62,13 @@ const RecipeGrid = ({ recipes }) => {
         <RecipeSort />
       </Box>
 
-      <Grid 
-        container 
-        spacing={3}
-        alignItems="stretch"
+      <Box 
+        sx={{ 
+          display: 'flex',
+          flexWrap: 'wrap',
+          margin: '-12px', // Compensate for item padding
+          alignItems: 'stretch'
+        }}
       >
         {recipes.map((recipe, index) => (
           <Fade 
@@ -77,20 +79,24 @@ const RecipeGrid = ({ recipes }) => {
               transitionDuration: '400ms'
             }}
           >
-            <Grid 
-              item 
-              xs={12} 
-              sm={6} 
-              md={4} 
+            <Box 
               sx={{ 
-                display: 'flex'
+                width: '100%',
+                padding: '12px', // Equivalent to spacing={3}
+                display: 'flex',
+                '@media (min-width: 600px)': {
+                  width: '50%', // 6/12 columns for sm screens
+                },
+                '@media (min-width: 900px)': {
+                  width: '33.333%', // 4/12 columns for md screens
+                }
               }}
             >
               <RecipeCard recipe={recipe} />
-            </Grid>
+            </Box>
           </Fade>
         ))}
-      </Grid>
+      </Box>
     </>
   );
 };

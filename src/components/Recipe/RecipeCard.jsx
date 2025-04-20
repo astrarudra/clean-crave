@@ -63,7 +63,6 @@ const RecipeCard = ({ recipe }) => {
   return (
     <Card 
       sx={{ 
-        width: '365px',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
