@@ -156,7 +156,7 @@ const RecipeDetailPage = () => {
 
   return (
     <Container maxWidth="md" sx={{ py: 3, mb: 6 }}>
-      <Box my={3}>
+      <Box>
         <Button 
           variant="outlined" 
           startIcon={<ArrowBackIcon />} 
@@ -192,63 +192,6 @@ const RecipeDetailPage = () => {
           }}
         />
 
-        {/* Recipe Image */}
-        <Box 
-          sx={{ 
-            width: '100%', 
-            height: 600, 
-            borderRadius: 2, 
-            overflow: 'hidden',
-            mb: 3,
-            boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
-            position: 'relative'
-          }}
-        >
-          <img
-            src={`https://astrarudra.github.io/data/images/${recipeId}.jpg`}
-            alt={recipe.title}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover'
-            }}
-          />
-          {recipe.dietType && (
-            <Chip
-              icon={getDietTypeIcon(recipe.dietType)}
-              label={recipe.dietType.charAt(0).toUpperCase() + recipe.dietType.slice(1)}
-              size="small"
-              sx={{
-                position: 'absolute',
-                top: 16,
-                right: 16,
-                bgcolor: 'rgba(255, 255, 255, 0.85)',
-                color: getDietTypeColor(recipe.dietType),
-                fontWeight: 500,
-                border: `1px solid ${getDietTypeColor(recipe.dietType)}`
-              }}
-            />
-          )}
-        </Box>
-        
-        <Box sx={{ position: 'relative', zIndex: 1 }}>
-          {/* Diet Type Badge */}
-          {recipe.dietType && (
-            <Chip
-              icon={getDietTypeIcon(recipe.dietType)}
-              label={recipe.dietType.charAt(0).toUpperCase() + recipe.dietType.slice(1)}
-              size="small"
-              sx={{
-                mb: 2,
-                bgcolor: `${getDietTypeColor(recipe.dietType)}20`,
-                color: getDietTypeColor(recipe.dietType),
-                borderColor: getDietTypeColor(recipe.dietType),
-                fontWeight: 500,
-                border: '1px solid'
-              }}
-            />
-          )}
-          
           <Typography 
             variant="h1" 
             component="h1" 
@@ -277,6 +220,48 @@ const RecipeDetailPage = () => {
               {recipe.description}
             </Typography>
           )}
+
+          {/* Diet Type Badge */}
+          {recipe.dietType && (
+            <Chip
+              icon={getDietTypeIcon(recipe.dietType)}
+              label={recipe.dietType.charAt(0).toUpperCase() + recipe.dietType.slice(1)}
+              size="small"
+              sx={{
+                mb: 4,
+                bgcolor: `${getDietTypeColor(recipe.dietType)}20`,
+                color: getDietTypeColor(recipe.dietType),
+                borderColor: getDietTypeColor(recipe.dietType),
+                fontWeight: 500,
+                border: '1px solid'
+              }}
+            />
+          )}
+
+        {/* Recipe Image */}
+        <Box 
+          sx={{ 
+            width: '100%', 
+            height: 600, 
+            borderRadius: 2, 
+            overflow: 'hidden',
+            mb: 3,
+            boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+            position: 'relative'
+          }}
+        >
+          <img
+            src={`https://astrarudra.github.io/data/images/${recipeId}.jpg`}
+            alt={recipe.title}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+          />
+        </Box>
+        
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
           
           {/* Meta Info Grid: Time, Servings, Meal Type */}
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>

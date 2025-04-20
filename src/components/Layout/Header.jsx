@@ -141,7 +141,8 @@ const Header = () => {
           ? 'linear-gradient(to right, #009688, #00A896)' 
           : '#ffffff',
         color: trigger ? 'white' : 'text.primary',
-        transition: 'all 0.2s ease-in-out'
+        transition: 'all 0.2s ease-in-out',
+        borderRadius: 0
       }}
     >
       <Container maxWidth="lg">

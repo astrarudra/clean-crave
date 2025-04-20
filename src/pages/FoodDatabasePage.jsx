@@ -134,11 +134,11 @@ const FoodDatabasePage = () => {
   // Get a visual indicator for sort direction
   const getSortDirectionIcon = (name) => {
     if (sortConfig.key !== name) {
-      return <Icon icon="mdi:sort" style={{ opacity: 0.6, width: 20, height: 20 }} />;
+      return <Icon icon="mdi:sort" style={{ opacity: 0.6, width: 22, height: 22, color: 'rgba(255, 255, 255, 0.7)' }} />;
     }
     return sortConfig.direction === 'asc' 
-      ? <Icon icon="mdi:sort-ascending" style={{ width: 20, height: 20, color: theme.palette.primary.main }} />
-      : <Icon icon="mdi:sort-descending" style={{ width: 20, height: 20, color: theme.palette.secondary.main }} />;
+      ? <Icon icon="mdi:sort-ascending" style={{ width: 22, height: 22, color: '#ffffff', filter: 'drop-shadow(0px 0px 2px rgba(0,0,0,0.2))' }} />
+      : <Icon icon="mdi:sort-descending" style={{ width: 22, height: 22, color: '#ffffff', filter: 'drop-shadow(0px 0px 2px rgba(0,0,0,0.2))' }} />;
   };
 
   // Get nutritional metrics color based on value (high, medium, low)
@@ -453,51 +453,51 @@ const FoodDatabasePage = () => {
           <Table stickyHeader>
             <TableHead>
               <TableRow sx={{ 
-                backgroundColor: theme.palette.primary.light,
+                backgroundColor: theme.palette.primary.main,
                 '& .MuiTableCell-root': {
-                  backgroundColor: theme.palette.primary.light,
-                  color: theme.palette.primary.main
+                  backgroundColor: theme.palette.primary.main,
+                  color: '#ffffff'
                 }
               }}>
-                <TableCell sx={{ fontWeight: 'bold', width: '35%', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
+                <TableCell sx={{ fontWeight: 'bold', width: '35%', borderBottom: `1px solid ${theme.palette.primary.dark}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between' }} onClick={() => requestSort('name')}>
-                    <Typography sx={{ fontWeight: 'bold' }}>Food Item</Typography>
+                    <Typography sx={{ fontWeight: 'bold', color: 'white' }}>Food Item</Typography>
                     {getSortDirectionIcon('name')}
                   </Box>
                 </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
+                <TableCell sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.dark}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'space-between' }} onClick={() => requestSort('type')}>
-                    <Typography sx={{ fontWeight: 'bold' }}>Category</Typography>
+                    <Typography sx={{ fontWeight: 'bold', color: 'white' }}>Category</Typography>
                     {getSortDirectionIcon('type')}
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.dark}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('cal')}>
-                    <Typography sx={{ fontWeight: 'bold' }}>Calories</Typography>
+                    <Typography sx={{ fontWeight: 'bold', color: 'white' }}>Calories</Typography>
                     <Box sx={{ ml: 1 }}>{getSortDirectionIcon('cal')}</Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.dark}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('protien')}>
-                    <Typography sx={{ fontWeight: 'bold' }}>Protein</Typography>
+                    <Typography sx={{ fontWeight: 'bold', color: 'white' }}>Protein</Typography>
                     <Box sx={{ ml: 1 }}>{getSortDirectionIcon('protien')}</Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.dark}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('carbs')}>
-                    <Typography sx={{ fontWeight: 'bold' }}>Carbs</Typography>
+                    <Typography sx={{ fontWeight: 'bold', color: 'white' }}>Carbs</Typography>
                     <Box sx={{ ml: 1 }}>{getSortDirectionIcon('carbs')}</Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.dark}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('fat')}>
-                    <Typography sx={{ fontWeight: 'bold' }}>Fat</Typography>
+                    <Typography sx={{ fontWeight: 'bold', color: 'white' }}>Fat</Typography>
                     <Box sx={{ ml: 1 }}>{getSortDirectionIcon('fat')}</Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.main}` }}>
+                <TableCell align="right" sx={{ fontWeight: 'bold', borderBottom: `1px solid ${theme.palette.primary.dark}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('fiber')}>
-                    <Typography sx={{ fontWeight: 'bold' }}>Fiber</Typography>
+                    <Typography sx={{ fontWeight: 'bold', color: 'white' }}>Fiber</Typography>
                     <Box sx={{ ml: 1 }}>{getSortDirectionIcon('fiber')}</Box>
                   </Box>
                 </TableCell>
