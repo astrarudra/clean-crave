@@ -4,12 +4,14 @@ import { Box, CircularProgress, Typography, Container } from '@mui/material';
 import { Controller, useAppStore } from './store';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
+import CallToAction from './components/Common/CallToAction';
 import HomePage from './pages/HomePage';
 import RecipeListPage from './pages/RecipeListPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
 import EducationListPage from './pages/EducationListPage';
 import EducationDetailPage from './pages/EducationDetailPage';
 import FoodDatabasePage from './pages/FoodDatabasePage';
+import ScrollToTop from './components/Utils/ScrollToTop';
 
 // Placeholder Pages
 // const HomePage = () => <Container><Typography variant="h1">Home Page</Typography></Container>;
@@ -28,6 +30,7 @@ function App() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <ScrollToTop />
       <Header />
       
       <Box component="main" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
@@ -88,6 +91,7 @@ function App() {
         )}
       </Box>
       
+      <CallToAction />
       <Footer />
     </Box>
   );

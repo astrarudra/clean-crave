@@ -197,6 +197,45 @@ const RecipeDetailPage = () => {
             zIndex: 0
           }}
         />
+
+        {/* Recipe Image */}
+        <Box 
+          sx={{ 
+            width: '100%', 
+            height: 280, 
+            borderRadius: 2, 
+            overflow: 'hidden',
+            mb: 3,
+            boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+            position: 'relative'
+          }}
+        >
+          <img
+            src={`https://astrarudra.github.io/data/images/${recipeId}.jpg`}
+            alt={recipe.title}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+          />
+          {recipe.dietType && (
+            <Chip
+              icon={getDietTypeIcon(recipe.dietType)}
+              label={recipe.dietType.charAt(0).toUpperCase() + recipe.dietType.slice(1)}
+              size="small"
+              sx={{
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                bgcolor: 'rgba(255, 255, 255, 0.85)',
+                color: getDietTypeColor(recipe.dietType),
+                fontWeight: 500,
+                border: `1px solid ${getDietTypeColor(recipe.dietType)}`
+              }}
+            />
+          )}
+        </Box>
         
         <Box sx={{ position: 'relative', zIndex: 1 }}>
           {/* Diet Type Badge */}

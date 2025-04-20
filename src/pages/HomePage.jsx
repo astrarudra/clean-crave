@@ -7,13 +7,10 @@ import {
   Paper,
   Button,
   useTheme,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Divider,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
+import FeaturesSection from '../components/Home/FeaturesSection';
+import ChartsSection from '../components/Home/ChartsSection';
 
 /**
  * Home page component that showcases the three main sections of the app:
@@ -34,7 +31,7 @@ const HomePage = () => {
       title: 'Healthy Recipes',
       path: '/recipes',
       icon: 'mdi:food-apple',
-      image: '/images/placeholder-recipe.jpg',
+      image: 'https://astrarudra.github.io/data/images/babycooking.png',
       description: 'Discover delicious and nutritious recipes that support your health goals.',
       features: [
         'Filter by dietary preferences',
@@ -48,7 +45,7 @@ const HomePage = () => {
       title: 'Food Database',
       path: '/food-database',
       icon: 'mdi:database',
-      image: '/images/food-database.jpg',
+      image: 'https://astrarudra.github.io/data/images/fooddb.png',
       description: 'Explore our comprehensive food database with nutritional information.',
       features: [
         'Detailed nutrition facts',
@@ -62,7 +59,7 @@ const HomePage = () => {
       title: 'Learn & Educate',
       path: '/education',
       icon: 'mdi:book-open-variant',
-      image: '/images/education.jpg',
+      image: 'https://astrarudra.github.io/data/images/foodedu.png',
       description: 'Expand your knowledge about nutrition and healthy eating habits.',
       features: [
         'Evidence-based articles',
@@ -74,7 +71,35 @@ const HomePage = () => {
   ];
 
   return (
-    <Box sx={{ overflowX: 'hidden' }}>
+    <Box sx={{ 
+      overflowX: 'hidden',
+      '@keyframes fadeInUp': {
+        from: {
+          opacity: 0,
+          transform: 'translateY(20px)'
+        },
+        to: {
+          opacity: 1,
+          transform: 'translateY(0)'
+        }
+      },
+      '@keyframes float': {
+        '0%, 100%': {
+          transform: 'translateY(0)'
+        },
+        '50%': {
+          transform: 'translateY(-10px)'
+        }
+      },
+      '@keyframes fadeIn': {
+        from: {
+          opacity: 0
+        },
+        to: {
+          opacity: 1
+        }
+      }
+    }}>
       {/* Hero Section */}
       <Box
         sx={{
@@ -210,174 +235,27 @@ const HomePage = () => {
       </Box>
 
       {/* Features Section */}
-      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
-        <Typography
-          variant="h2"
-          align="center"
-          gutterBottom
-          sx={{ 
-            mb: 2, 
-            fontSize: { xs: '2rem', md: '2.5rem' },
-            fontWeight: 700,
-          }}
-        >
-          Discover What We Offer
-        </Typography>
-        <Typography
-          variant="h6"
-          align="center"
-          color="text.secondary"
-          sx={{ 
-            mb: 6, 
-            maxWidth: '800px', 
-            mx: 'auto',
-            fontSize: { xs: '1rem', md: '1.15rem' },
-          }}
-        >
-          Clean Crave provides all the tools you need to make healthy eating easy, 
-          enjoyable, and educational.
-        </Typography>
-
-        <Grid container spacing={4}>
-          {sections.map((section) => (
-            <Grid item xs={12} md={4} key={section.id}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-8px)',
-                    boxShadow: (theme) => theme.shadows[8],
-                  },
-                  borderRadius: 2,
-                  overflow: 'hidden',
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={section.image}
-                  alt={section.title}
-                />
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 16,
-                    left: 16,
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    borderRadius: '50%',
-                    width: 48,
-                    height: 48,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: 3,
-                  }}
-                >
-                  <Icon icon={section.icon} width={24} height={24} />
-                </Box>
-                <CardContent sx={{ flexGrow: 1, py: 3 }}>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="h2"
-                    sx={{ fontWeight: 600, mb: 2 }}
-                  >
-                    {section.title}
-                  </Typography>
-                  <Typography sx={{ mb: 2 }}>{section.description}</Typography>
-                  <Box component="ul" sx={{ pl: 2, mt: 2 }}>
-                    {section.features.map((feature) => (
-                      <Typography
-                        component="li"
-                        key={feature}
-                        sx={{
-                          mb: 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          fontSize: '0.95rem',
-                          '&::before': {
-                            content: '""',
-                            display: 'inline-block',
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            bgcolor: 'primary.light',
-                            mr: 1.5,
-                            ml: -2,
-                          },
-                        }}
-                      >
-                        {feature}
-                      </Typography>
-                    ))}
-                  </Box>
-                </CardContent>
-                <CardActions sx={{ px: 3, pb: 3 }}>
-                  <Button
-                    size="large"
-                    onClick={() => handleNavigate(section.path)}
-                    endIcon={<Icon icon="mdi:arrow-right" />}
-                    sx={{
-                      color: 'primary.main',
-                      fontWeight: 600,
-                      '&:hover': {
-                        backgroundColor: 'rgba(107, 196, 166, 0.1)',
-                      },
-                    }}
-                  >
-                    Explore {section.title.split(' ')[0]}
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
+      <FeaturesSection sections={sections} onNavigate={handleNavigate} />
 
       {/* Quote Section */}
       <Box
         sx={{
           backgroundColor: 'rgba(107, 196, 166, 0.1)',
-          py: { xs: 6, md: 10 },
+          py: 10,
+          my: 5,
         }}
       >
-        <Container maxWidth="md">
+        <Container>
           <Box
             sx={{
               textAlign: 'center',
               position: 'relative',
-              '&::before, &::after': {
-                content: '""',
-                position: 'absolute',
-                width: 60,
-                height: 60,
-                opacity: 0.2,
-              },
-              '&::before': {
-                top: -20,
-                left: 0,
-                backgroundImage: 'url(/images/quote-left.svg)',
-                backgroundSize: 'contain',
-                backgroundRepeat: 'no-repeat',
-              },
-              '&::after': {
-                bottom: -20,
-                right: 0,
-                backgroundImage: 'url(/images/quote-right.svg)',
-                backgroundSize: 'contain',
-                backgroundRepeat: 'no-repeat',
-              },
             }}
           >
             <Typography
               variant="h4"
               component="blockquote"
               sx={{
-                fontStyle: 'italic',
                 fontWeight: 500,
                 lineHeight: 1.5,
                 mb: 3,
@@ -398,59 +276,9 @@ const HomePage = () => {
         </Container>
       </Box>
 
-      {/* Call to Action Section */}
-      <Box
-        sx={{
-          py: { xs: 6, md: 10 },
-          background: 'linear-gradient(to right, #ffffff, #f7f9f9, #ffffff)',
-        }}
-      >
-        <Container maxWidth="md">
-          <Paper
-            elevation={0}
-            sx={{
-              p: { xs: 3, md: 5 },
-              borderRadius: 2,
-              backgroundColor: 'white',
-              border: '1px solid',
-              borderColor: 'divider',
-              textAlign: 'center',
-            }}
-          >
-            <Typography
-              variant="h3"
-              gutterBottom
-              sx={{ 
-                fontWeight: 700, 
-                mb: 2,
-                fontSize: { xs: '1.75rem', md: '2.25rem' }
-              }}
-            >
-              Start Your Healthy Eating Journey Today
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ mb: 4, maxWidth: '600px', mx: 'auto' }}
-            >
-              Whether you're looking for new recipes, nutrition facts, or want to learn more about
-              healthy eating, Clean Crave has everything you need to support your wellness goals.
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={() => handleNavigate('/recipes')}
-              sx={{
-                px: 4,
-                py: 1.5,
-                fontWeight: 600,
-              }}
-            >
-              Get Started Now
-            </Button>
-          </Paper>
-        </Container>
-      </Box>
+      {/* Charts Section */}
+      <ChartsSection />
+
     </Box>
   );
 };

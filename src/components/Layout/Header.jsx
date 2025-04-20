@@ -41,13 +41,17 @@ const Header = () => {
   };
 
   const navLinks = [
+    { text: 'Home', path: '/', icon: <Icon icon="mdi:home" style={{ fontSize: '1.25rem' }} /> },
     { text: 'Recipes', path: '/recipes', icon: <LocalDiningIcon fontSize="small" /> },
     { text: 'Food Database', path: '/food-database', icon: <Icon icon="mdi:food-apple" style={{ fontSize: '1.25rem' }} /> },
     { text: 'Learn', path: '/education', icon: <MenuBookIcon fontSize="small" /> },
   ];
 
   const isActive = (path) => {
-    return location.pathname.startsWith(path);
+    if (path === '/' && location.pathname === '/') {
+      return true;
+    }
+    return path !== '/' && location.pathname.startsWith(path);
   };
 
   const drawer = (
@@ -98,7 +102,8 @@ const Header = () => {
               },
               backgroundColor: isActive(item.path) ? 'action.selected' : 'transparent',
               borderRight: isActive(item.path) ? '4px solid' : 'none',
-              borderColor: 'primary.main'
+              borderColor: 'primary.main',
+              borderRadius: 0
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -136,11 +141,11 @@ const Header = () => {
           ? 'linear-gradient(to right, #009688, #00A896)' 
           : '#ffffff',
         color: trigger ? 'white' : 'text.primary',
-        transition: 'all 0.3s ease-in-out'
+        transition: 'all 0.2s ease-in-out'
       }}
     >
       <Container maxWidth="lg">
-        <Toolbar disableGutters sx={{ py: 0.8 }}>
+        <Toolbar disableGutters sx={{ py: 1.2 }}>
           {/* Logo/Brand */}
           <MuiLink 
             component={RouterLink} 
@@ -193,25 +198,16 @@ const Header = () => {
                 to={item.path}
                 startIcon={item.icon}
                 color={trigger ? 'inherit' : (isActive(item.path) ? 'primary' : 'inherit')}
-                variant={trigger && isActive(item.path) ? "outlined" : "text"}
+                variant="text"
                 sx={{ 
                   fontWeight: isActive(item.path) ? 600 : 500,
                   fontSize: '0.95rem',
                   position: 'relative',
                   px: 2,
                   py: 1,
-                  borderRadius: 2,
+                  borderRadius: 0,
                   mx: 0.5,
-                  ...(trigger && isActive(item.path) 
-                    ? { 
-                        borderColor: 'rgba(255,255,255,0.7)',
-                        '&:hover': {
-                          borderColor: 'white',
-                          backgroundColor: 'rgba(255,255,255,0.1)'
-                        }
-                      } 
-                    : {}),
-                  ...(!trigger && isActive(item.path) 
+                  ...(isActive(item.path) 
                     ? {
                         '&::after': {
                           content: '""',
@@ -221,11 +217,22 @@ const Header = () => {
                           width: '30%',
                           height: 3,
                           transform: 'translateX(-50%)',
-                          backgroundColor: 'primary.main',
-                          borderRadius: 5
+                          backgroundColor: trigger ? 'white' : 'primary.main',
+                          borderRadius: 0
                         }
                       } 
-                    : {})
+                    : {}),
+                  ...(!trigger
+                    ? {
+                        '&:hover': {
+                          backgroundColor: 'rgba(0,0,0,0.04)'
+                        }
+                      }
+                    : {
+                        '&:hover': {
+                          backgroundColor: 'rgba(255,255,255,0.2)'
+                        }
+                      })
                 }}
               >
                 {item.text}

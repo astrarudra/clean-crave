@@ -22,7 +22,8 @@ import {
   useTheme,
   useMediaQuery,
   Card,
-  CardContent
+  CardContent,
+  alpha
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 
@@ -449,7 +450,7 @@ const FoodDatabasePage = () => {
           boxShadow: theme.shadows[2]
         }}
       >
-        <TableContainer sx={{ maxHeight: 'calc(100vh - 400px)' }}>
+        <TableContainer>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -473,25 +474,25 @@ const FoodDatabasePage = () => {
                 </TableCell>
                 <TableCell align="right" sx={{ fontWeight: 'bold' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('protien')}>
-                    Protein (g)
+                    Protein
                     {getSortDirectionIcon('protien')}
                   </Box>
                 </TableCell>
                 <TableCell align="right" sx={{ fontWeight: 'bold' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('carbs')}>
-                    Carbs (g)
+                    Carbs
                     {getSortDirectionIcon('carbs')}
                   </Box>
                 </TableCell>
                 <TableCell align="right" sx={{ fontWeight: 'bold' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('fat')}>
-                    Fat (g)
+                    Fat
                     {getSortDirectionIcon('fat')}
                   </Box>
                 </TableCell>
                 <TableCell align="right" sx={{ fontWeight: 'bold' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', justifyContent: 'flex-end' }} onClick={() => requestSort('fiber')}>
-                    Fiber (g)
+                    Fiber
                     {getSortDirectionIcon('fiber')}
                   </Box>
                 </TableCell>
@@ -595,6 +596,7 @@ const FoodDatabasePage = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        
         
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}

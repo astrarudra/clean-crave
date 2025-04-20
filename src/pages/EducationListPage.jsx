@@ -18,7 +18,8 @@ import {
   Tabs,
   Tab,
   TextField,
-  InputAdornment
+  InputAdornment,
+  Avatar
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
@@ -39,11 +40,6 @@ const EducationListPage = () => {
 
   // Category configuration with icons and colors
   const categoryConfig = {
-    'Healthy Eating Basics': {
-      icon: 'mdi:silverware-fork-knife',
-      color: '#4CAF50',
-      gradient: 'linear-gradient(45deg, #4CAF50, #81C784)'
-    },
     'Meal Planning': {
       icon: 'mdi:calendar-check',
       color: '#FF9800',
@@ -185,7 +181,7 @@ const EducationListPage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
-      {/* Hero Section - same style as Food Database */}
+      {/* Hero Section - Removed right side image */}
       <Paper 
         elevation={0}
         sx={{
@@ -210,7 +206,11 @@ const EducationListPage = () => {
           }}
         />
         
-        <Box sx={{ position: 'relative', zIndex: 1 }}>
+        <Box sx={{ 
+          position: 'relative', 
+          zIndex: 1,
+          width: '100%' // Changed from partial width to full width
+        }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Icon 
               icon="mdi:book-open-page-variant" 
@@ -395,11 +395,22 @@ const EducationListPage = () => {
         </Tabs>
       </Paper>
 
-      {/* Article Grid */}
+      {/* Article Grid - Changed to Flex layout with 2 cards per row */}
       {filteredArticles.length > 0 ? (
-        <Grid container spacing={3}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          margin: -1.5 // Negative margin to offset the padding of cards
+        }}>
           {filteredArticles.map((article) => (
-            <Grid item xs={12} md={6} key={article.id}>
+            <Box 
+              key={article.id}
+              sx={{ 
+                width: { xs: '100%', md: '50%' }, 
+                p: 1.5,
+                boxSizing: 'border-box'
+              }}
+            >
               <Card 
                 elevation={2}
                 sx={{
@@ -413,62 +424,96 @@ const EducationListPage = () => {
                   },
                   borderRadius: 2,
                   overflow: 'hidden',
-                  position: 'relative'
+                  position: 'relative',
+                  border: `1px solid ${theme.palette.divider}`
                 }}
               >
-                <CardActionArea onClick={() => handleArticleClick(article.id)} sx={{ flexGrow: 1 }}>
-                  <Box 
-                    sx={{
-                      position: 'absolute',
-                      top: 16,
-                      right: 16,
-                      zIndex: 2
-                    }}
-                  >
-                    {article.tags && article.tags.slice(0, 2).map(tag => (
-                      <Chip 
-                        key={tag} 
-                        label={tag} 
-                        size="small" 
+                <CardActionArea onClick={() => handleArticleClick(article.id)} sx={{ flexGrow: 1, height: '100%' }}>
+                  <CardContent sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    {/* Category Icon/Avatar added before title */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                      {article.category && categoryConfig[article.category] && (
+                        <Avatar 
+                          sx={{ 
+                            mr: 2, 
+                            bgcolor: alpha(categoryConfig[article.category].color, 0.15),
+                            color: categoryConfig[article.category].color,
+                            width: 44,
+                            height: 44,
+                            borderRadius: '12px',
+                            boxShadow: `0 2px 8px ${alpha(categoryConfig[article.category].color, 0.25)}`
+                          }}
+                        >
+                          <Icon 
+                            icon={categoryConfig[article.category].icon} 
+                            width={22} 
+                            height={22} 
+                          />
+                        </Avatar>
+                      )}
+                      <Typography 
+                        variant="h6" 
+                        component="h3" 
                         sx={{ 
-                          mr: 0.5, 
-                          mb: 0.5,
-                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                          color: theme.palette.primary.dark,
-                          fontWeight: 500
-                        }} 
-                      />
-                    ))}
-                  </Box>
-                  <CardContent sx={{ p: 3 }}>
-                    <Typography 
-                      variant="h5" 
-                      component="h3" 
-                      gutterBottom
-                      sx={{ 
-                        fontWeight: 600,
-                        mb: 2,
-                        pr: 6 // Make room for tags
-                      }}
-                    >
-                      {article.title}
-                    </Typography>
+                          fontWeight: 600,
+                          mb: 0,
+                          flex: 1,
+                          lineHeight: 1.3
+                        }}
+                      >
+                        {article.title}
+                      </Typography>
+                    </Box>
                     <Typography 
                       variant="body1" 
                       color="text.secondary"
                       sx={{ 
-                        mb: 2,
+                        mb: 3,
                         display: '-webkit-box',
                         WebkitLineClamp: 3,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
-                        textOverflow: 'ellipsis'
+                        textOverflow: 'ellipsis',
+                        lineHeight: 1.6
                       }}
                     >
                       {article.description}
                     </Typography>
                     
-                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 'auto' }}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between',
+                      mt: 'auto',
+                      pt: 2,
+                      borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}`
+                    }}>
+                      {/* Tags moved to bottom left */}
+                      <Box>
+                        {article.tags && article.tags.slice(0, 2).map(tag => (
+                          <Chip 
+                            key={tag} 
+                            label={tag} 
+                            size="small" 
+                            sx={{ 
+                              mr: 0.5,
+                              backgroundColor: alpha(
+                                article.category && categoryConfig[article.category] 
+                                  ? categoryConfig[article.category].color 
+                                  : theme.palette.primary.main, 
+                                0.1
+                              ),
+                              color: article.category && categoryConfig[article.category] 
+                                ? categoryConfig[article.category].color 
+                                : theme.palette.primary.dark,
+                              fontWeight: 500,
+                              '& .MuiChip-label': { px: 1 }
+                            }} 
+                          />
+                        ))}
+                      </Box>
+                      
+                      {/* Read Article button on right */}
                       <Button 
                         endIcon={<Icon icon="mdi:arrow-right" />}
                         sx={{
@@ -489,9 +534,9 @@ const EducationListPage = () => {
                   </CardContent>
                 </CardActionArea>
               </Card>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       ) : (
         <Paper
           elevation={0}

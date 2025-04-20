@@ -11,11 +11,15 @@ import {
   Chip,
   Grid,
   Card,
+  CardContent,
   useTheme,
   alpha,
-  Avatar
+  Avatar,
+  Link
 } from '@mui/material';
 import { Icon } from '@iconify/react';
+import ReactMarkdown from 'react-markdown';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 /**
  * Page component for displaying the details of a single educational article.
@@ -31,11 +35,6 @@ const EducationDetailPage = () => {
 
   // Category configuration with icons and colors - same as in EducationListPage
   const categoryConfig = {
-    'Healthy Eating Basics': {
-      icon: 'mdi:silverware-fork-knife',
-      color: '#4CAF50',
-      gradient: 'linear-gradient(45deg, #4CAF50, #81C784)'
-    },
     'Meal Planning': {
       icon: 'mdi:calendar-check',
       color: '#FF9800',
@@ -58,24 +57,32 @@ const EducationDetailPage = () => {
     }
   };
 
+  // Use state for markdown content and related articles
+  const [articleContent, setArticleContent] = useState('');
+  const [relatedArticles, setRelatedArticles] = useState([]);
+
   useEffect(() => {
     const fetchArticle = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('https://astrarudra.github.io/data/index.json');
-        if (!response.ok) {
+        
+        // First fetch the index data
+        const indexResponse = await fetch('https://astrarudra.github.io/data/index.json');
+        if (!indexResponse.ok) {
           throw new Error('Failed to fetch data');
         }
-        const data = await response.json();
+        const data = await indexResponse.json();
         
         // Try to find the article in different possible locations in the JSON
         let foundArticle = null;
+        let articles = [];
         
         if (data.education) {
-          console.log('Found education data:', data.education);
-          foundArticle = data.education.find(article => article.id === educationId);
+          articles = data.education;
+          foundArticle = articles.find(article => article.id === educationId);
         } else if (data.articles) {
-          foundArticle = data.articles.find(article => article.id === educationId);
+          articles = data.articles;
+          foundArticle = articles.find(article => article.id === educationId);
         }
         
         // If we still don't have an article, log the data structure for debugging
@@ -85,6 +92,36 @@ const EducationDetailPage = () => {
         }
         
         setArticle(foundArticle);
+        
+        // Now fetch the markdown content for this article
+        try {
+          const contentResponse = await fetch(`https://astrarudra.github.io/data/education/${educationId}.md`);
+          if (!contentResponse.ok) {
+            throw new Error('Content file not found');
+          }
+          const markdownContent = await contentResponse.text();
+          setArticleContent(markdownContent);
+        } catch (contentError) {
+          console.error('Error fetching markdown content:', contentError);
+          // Fallback content if MD file doesn't exist
+          setArticleContent(`# ${foundArticle.title}\n\n${foundArticle.description}\n\n## Content Coming Soon`);
+        }
+        
+        // Find related articles based on tags
+        if (foundArticle.tags && foundArticle.tags.length > 0 && articles.length > 0) {
+          const related = articles
+            .filter(a => a.id !== educationId) // Exclude current article
+            .filter(a => a.tags && a.tags.some(tag => foundArticle.tags.includes(tag)))
+            .sort((a, b) => {
+              // Count matching tags to sort by relevance
+              const aMatches = a.tags.filter(tag => foundArticle.tags.includes(tag)).length;
+              const bMatches = b.tags.filter(tag => foundArticle.tags.includes(tag)).length;
+              return bMatches - aMatches;
+            })
+            .slice(0, 3); // Get top 3 related articles
+          
+          setRelatedArticles(related);
+        }
       } catch (error) {
         console.error('Error fetching article:', error);
         setError(error.message);
@@ -133,7 +170,7 @@ const EducationDetailPage = () => {
           </Typography>
           <Button 
             variant="contained" 
-            startIcon={<Icon icon="mdi:arrow-left" />} 
+            startIcon={<ArrowBackIcon />} 
             onClick={() => navigate('/education')}
             sx={{ mt: 2 }}
           >
@@ -152,107 +189,144 @@ const EducationDetailPage = () => {
   };
 
   return (
-    <Box>
-      {/* Hero Section with Gradient Background */}
-      <Box
-        sx={{
-          background: categoryData.gradient,
-          py: { xs: 6, md: 8 },
+    <Container maxWidth="md" sx={{ py: 3, mb: 6 }}>
+      <Box my={3}>
+        <Button 
+          variant="outlined" 
+          startIcon={<ArrowBackIcon />} 
+          onClick={() => navigate('/education')}
+          sx={{ mb: 2 }}
+        >
+          Back to Learn
+        </Button>
+      </Box>
+
+      {/* Article Header Section */}
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: { xs: 2, md: 4 }, 
+          mb: 4, 
+          borderRadius: 2,
           position: 'relative',
-          overflow: 'hidden',
+          overflow: 'hidden'
         }}
       >
-        {/* Decorative elements */}
-        <Box
+        {/* Background Decoration */}
+        <Box 
           sx={{
             position: 'absolute',
-            top: '10%',
-            right: '5%',
-            width: '15%',
-            height: '15%',
-            background: 'rgba(255, 255, 255, 0.1)',
+            right: -50,
+            top: -50,
+            width: 200,
+            height: 200,
+            background: `radial-gradient(circle, ${theme.palette.primary.light}30, transparent 70%)`,
             borderRadius: '50%',
-          }}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: '5%',
-            left: '8%',
-            width: '20%',
-            height: '20%',
-            background: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '50%',
+            zIndex: 0
           }}
         />
 
-        <Container maxWidth="md">
-          <Box mb={2} display="flex" alignItems="center">
-            <Button
-              variant="outlined"
-              startIcon={<Icon icon="mdi:arrow-left" />}
-              onClick={() => navigate('/education')}
+        {/* Article Image or Category Avatar */}
+        <Box 
+          sx={{ 
+            width: '100%', 
+            height: 220, 
+            borderRadius: 2, 
+            overflow: 'hidden',
+            mb: 3,
+            boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+            position: 'relative',
+            background: categoryData.gradient,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <Avatar
+            sx={{
+              bgcolor: 'white',
+              width: 120,
+              height: 120,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
+            }}
+          >
+            <Icon
+              icon={categoryData.icon}
+              style={{
+                color: categoryData.color,
+                width: 64,
+                height: 64
+              }}
+            />
+          </Avatar>
+          
+          {category && (
+            <Chip
+              label={category}
+              size="small"
               sx={{
-                color: 'white',
-                borderColor: 'white',
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                bgcolor: 'rgba(255, 255, 255, 0.85)',
+                color: categoryData.color,
+                fontWeight: 500,
+                border: `1px solid ${categoryData.color}`
+              }}
+            />
+          )}
+        </Box>
+        
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
+          {/* Category Badge */}
+          {category && (
+            <Chip
+              icon={<Icon icon={categoryData.icon} />}
+              label={category}
+              size="small"
+              sx={{
+                mb: 2,
+                bgcolor: `${categoryData.color}20`,
+                color: categoryData.color,
+                borderColor: categoryData.color,
+                fontWeight: 500,
+                border: '1px solid'
+              }}
+            />
+          )}
+          
+          <Typography 
+            variant="h1" 
+            component="h1" 
+            gutterBottom
+            sx={{
+              fontSize: { xs: '2rem', md: '2.5rem' },
+              fontWeight: 700,
+              lineHeight: 1.2,
+              mb: 2
+            }}
+          >
+            {title}
+          </Typography>
+          
+          {/* Article Description */}
+          {description && (
+            <Typography 
+              variant="h6" 
+              color="text.secondary"
+              sx={{ 
                 mb: 3,
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  borderColor: 'white',
-                },
+                fontSize: { xs: '1rem', md: '1.1rem' },
+                fontWeight: 400
               }}
             >
-              Back to Learn
-            </Button>
-          </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-            <Avatar
-              sx={{
-                bgcolor: 'white',
-                width: { xs: 48, md: 64 },
-                height: { xs: 48, md: 64 },
-                mr: 2,
-              }}
-            >
-              <Icon
-                icon={categoryData.icon}
-                style={{
-                  color: categoryData.color,
-                  width: { xs: 28, md: 36 },
-                  height: { xs: 28, md: 36 },
-                }}
-              />
-            </Avatar>
-            <Box>
-              <Typography
-                variant="overline"
-                sx={{
-                  color: 'white',
-                  opacity: 0.9,
-                  letterSpacing: 1,
-                  fontWeight: 500,
-                }}
-              >
-                {category}
-              </Typography>
-              <Typography
-                variant="h2"
-                component="h1"
-                sx={{
-                  color: 'white',
-                  fontWeight: 700,
-                  fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem' },
-                  textShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                }}
-              >
-                {title}
-              </Typography>
-            </Box>
-          </Box>
-
+              {description}
+            </Typography>
+          )}
+          
+          {/* Tags */}
           {tags && tags.length > 0 && (
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ mb: 2 }}>
               {tags.map((tag) => (
                 <Chip
                   key={tag}
@@ -261,207 +335,287 @@ const EducationDetailPage = () => {
                   sx={{
                     mr: 1,
                     mb: 1,
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    color: 'white',
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    color: theme.palette.primary.main,
                     '& .MuiChip-label': { fontWeight: 500 },
                   }}
                 />
               ))}
             </Box>
           )}
-        </Container>
-      </Box>
+        </Box>
+      </Paper>
 
-      {/* Main Content */}
-      <Container maxWidth="md" sx={{ py: 6 }}>
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={8}>
-            <Card 
-              elevation={0} 
+      {/* Article Content Grid */}
+      <Grid container spacing={3}>
+        {/* Article Content */}
+        <Grid item xs={12} md={8}>
+          <Paper 
+            elevation={2} 
+            sx={{ 
+              p: { xs: 2, md: 4 }, 
+              borderRadius: 2,
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            {/* Decoration */}
+            <Box 
+              sx={{
+                position: 'absolute',
+                right: -30,
+                bottom: -30,
+                width: 120,
+                height: 120,
+                background: `radial-gradient(circle, ${theme.palette.primary.light}20, transparent 70%)`,
+                borderRadius: '50%',
+                zIndex: 0
+              }}
+            />
+            
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              {/* Render the markdown content */}
+              <Box sx={{ 
+                color: theme.palette.text.primary,
+                fontSize: '1rem',
+                lineHeight: 1.8,
+                '& h1, & h2, & h3, & h4, & h5, & h6': {
+                  mt: 4,
+                  mb: 2,
+                  fontWeight: 600,
+                  color: theme.palette.text.primary,
+                },
+                '& h1': { fontSize: '1.8rem' },
+                '& h2': { fontSize: '1.5rem' },
+                '& h3': { fontSize: '1.3rem' },
+                '& h4': { fontSize: '1.1rem' },
+                '& p': { 
+                  mb: 2,
+                  fontSize: '1rem',
+                  lineHeight: 1.8,
+                },
+                '& ul, & ol': {
+                  pl: 3,
+                  mb: 3,
+                },
+                '& li': {
+                  mb: 1,
+                },
+                '& a': {
+                  color: theme.palette.primary.main,
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                },
+                '& blockquote': {
+                  borderLeft: `4px solid ${theme.palette.divider}`,
+                  pl: 2,
+                  my: 2,
+                  color: alpha(theme.palette.text.primary, 0.8),
+                  fontStyle: 'italic',
+                },
+                '& img': {
+                  maxWidth: '100%',
+                  height: 'auto',
+                  borderRadius: 1,
+                  my: 2,
+                },
+                '& code': {
+                  fontFamily: 'monospace',
+                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                  p: 0.5,
+                  borderRadius: 0.5,
+                  fontSize: '0.9rem',
+                }
+              }}>
+                <ReactMarkdown>
+                  {articleContent}
+                </ReactMarkdown>
+              </Box>
+            </Box>
+          </Paper>
+        </Grid>
+
+        {/* Sidebar */}
+        <Grid item xs={12} md={4}>
+          <Box sx={{ position: 'sticky', top: '100px' }}>
+            {/* Related Articles Card */}
+            <Paper 
+              elevation={2} 
               sx={{ 
-                p: { xs: 2, sm: 3, md: 4 },
-                mb: 4,
+                p: 3, 
+                mb: 3, 
                 borderRadius: 2,
-                boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-                border: `1px solid ${theme.palette.divider}`
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
-              {/* Article Lead Paragraph */}
-              <Typography 
-                variant="h6" 
-                component="div" 
-                sx={{ 
-                  mb: 4, 
-                  fontWeight: 500,
-                  color: alpha(theme.palette.text.primary, 0.9),
-                  fontSize: '1.1rem',
-                  lineHeight: 1.6
+              {/* Decoration */}
+              <Box 
+                sx={{
+                  position: 'absolute',
+                  left: -30,
+                  top: -30,
+                  width: 120,
+                  height: 120,
+                  background: `radial-gradient(circle, ${theme.palette.primary.light}10, transparent 70%)`,
+                  borderRadius: '50%',
+                  zIndex: 0
                 }}
-              >
-                {description}
-              </Typography>
-
-              <Divider sx={{ mb: 4 }} />
-
-              {/* Article Content - In a real app, this would parse and display the actual content */}
-              <Typography 
-                variant="body1"
-                sx={{ 
-                  color: theme.palette.text.primary,
-                  '& p': { mb: 2 },
-                  fontSize: '1rem',
-                  lineHeight: 1.8
-                }}
-              >
-                <p>This is where the full article content would be displayed. In a real application, this would fetch and render the complete article content.</p>
-                
-                <p>The content could be structured with headers, paragraphs, lists, images, and other rich media elements. For demonstration purposes, we're showing placeholder content.</p>
-                
-                <Typography variant="h5" sx={{ my: 3, fontWeight: 600 }}>Section Heading</Typography>
-                
-                <p>Each section of the article would be well-formatted with appropriate headings, paragraphs, and visual elements to ensure readability and engagement.</p>
-                
-                <p>The content would provide detailed information on the topic, with evidence-based insights and practical advice that readers can apply to their daily lives.</p>
-                
-                <Typography variant="h5" sx={{ my: 3, fontWeight: 600 }}>Key Takeaways</Typography>
-                
-                <ul style={{ paddingLeft: '20px', marginBottom: '20px' }}>
-                  <li style={{ marginBottom: '10px' }}>Important point about {category.toLowerCase()}</li>
-                  <li style={{ marginBottom: '10px' }}>Practical advice that readers can implement</li>
-                  <li style={{ marginBottom: '10px' }}>Scientific evidence supporting the recommendations</li>
-                  <li style={{ marginBottom: '10px' }}>Resources for further learning on this topic</li>
-                </ul>
-                
-                <p>To implement this fully, you would need to store the complete article text in your data source and create a component to render it properly.</p>
-              </Typography>
-            </Card>
-          </Grid>
-
-          {/* Sidebar */}
-          <Grid item xs={12} md={4}>
-            <Box sx={{ position: 'sticky', top: '100px' }}>
-              {/* Related Articles Card */}
-              <Card 
-                elevation={0} 
-                sx={{ 
-                  p: 3,
-                  mb: 3,
-                  borderRadius: 2,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-                  border: `1px solid ${theme.palette.divider}`
-                }}
-              >
+              />
+              
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
                 <Typography 
                   variant="h6" 
                   sx={{ 
                     fontWeight: 600, 
                     mb: 2,
                     pb: 1,
-                    borderBottom: `2px solid ${categoryData.color}`
+                    borderBottom: `2px solid ${categoryData.color}`,
+                    display: 'flex',
+                    alignItems: 'center'
                   }}
                 >
-                  Related Topics
+                  <Icon 
+                    icon="mdi:bookmark-multiple"
+                    style={{
+                      marginRight: 8,
+                      color: categoryData.color
+                    }}
+                  />
+                  Related Articles
                 </Typography>
                 
                 <Box component="ul" sx={{ pl: 0, mt: 2, listStyleType: 'none' }}>
-                  {[1, 2, 3].map((i) => (
-                    <Box 
-                      component="li" 
-                      key={i}
-                      sx={{
-                        mb: 2,
-                        pb: 2,
-                        borderBottom: i < 3 ? `1px solid ${theme.palette.divider}` : 'none'
-                      }}
-                    >
-                      <Typography
+                  {relatedArticles.length > 0 ? (
+                    relatedArticles.map((relatedArticle, index) => (
+                      <Box 
+                        component="li" 
+                        key={relatedArticle.id}
                         sx={{
-                          fontWeight: 500,
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          '&:hover': { color: categoryData.color },
+                          mb: 2,
+                          pb: 2,
+                          borderBottom: index < relatedArticles.length - 1 ? `1px solid ${theme.palette.divider}` : 'none'
                         }}
                       >
-                        <Icon 
-                          icon="mdi:chevron-right" 
-                          style={{ 
-                            marginRight: 8, 
-                            marginTop: 4,
-                            color: categoryData.color 
-                          }} 
-                        />
-                        Example related article title {i} about {category.toLowerCase()}
-                      </Typography>
-                    </Box>
-                  ))}
+                        <Link
+                          component="button"
+                          onClick={() => navigate(`/education/${relatedArticle.id}`)}
+                          underline="none"
+                          sx={{
+                            fontWeight: 500,
+                            color: 'inherit',
+                            textAlign: 'left',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            '&:hover': { color: categoryData.color },
+                          }}
+                        >
+                          <Icon 
+                            icon="mdi:chevron-right" 
+                            style={{ 
+                              marginRight: 8, 
+                              marginTop: 4,
+                              color: categoryData.color,
+                              flexShrink: 0
+                            }} 
+                          />
+                          {relatedArticle.title}
+                        </Link>
+                        {relatedArticle.tags && relatedArticle.tags.length > 0 && (
+                          <Box sx={{ mt: 1, ml: 4 }}>
+                            {relatedArticle.tags.slice(0, 2).map(tag => (
+                              <Chip
+                                key={tag}
+                                label={tag}
+                                size="small"
+                                sx={{
+                                  mr: 0.5,
+                                  mb: 0.5,
+                                  fontSize: '0.7rem',
+                                  height: 20,
+                                  bgcolor: alpha(categoryData.color, 0.1),
+                                  color: categoryData.color,
+                                }}
+                              />
+                            ))}
+                          </Box>
+                        )}
+                      </Box>
+                    ))
+                  ) : (
+                    <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+                      No related articles found.
+                    </Typography>
+                  )}
                 </Box>
-              </Card>
+              </Box>
+            </Paper>
 
-              {/* About Category Card */}
-              <Card 
-                elevation={0} 
-                sx={{ 
-                  p: 3,
-                  mb: 3,
-                  borderRadius: 2,
-                  background: alpha(categoryData.color, 0.05),
-                  border: `1px solid ${alpha(categoryData.color, 0.2)}`
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Box
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      background: categoryData.color,
-                      mr: 2
-                    }}
-                  >
-                    <Icon 
-                      icon={categoryData.icon} 
-                      style={{ 
-                        color: 'white', 
-                        width: 20, 
-                        height: 20 
-                      }} 
-                    />
-                  </Box>
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    About {category}
-                  </Typography>
-                </Box>
-                
-                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                  This section provides articles about {category.toLowerCase()}, helping you understand key concepts and apply them to your health journey.
-                </Typography>
-                
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  sx={{ 
-                    mt: 2, 
-                    color: categoryData.color,
-                    borderColor: categoryData.color,
-                    '&:hover': {
-                      borderColor: categoryData.color,
-                      backgroundColor: alpha(categoryData.color, 0.1),
-                    }
+            {/* About Category Card */}
+            <Paper 
+              elevation={2} 
+              sx={{ 
+                p: 3,
+                mb: 3,
+                borderRadius: 2,
+                background: alpha(categoryData.color, 0.05),
+                border: `1px solid ${alpha(categoryData.color, 0.2)}`
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: categoryData.color,
+                    mr: 2
                   }}
-                  onClick={() => navigate('/education')}
                 >
-                  Browse All {category} Articles
-                </Button>
-              </Card>
-            </Box>
-          </Grid>
+                  <Icon 
+                    icon={categoryData.icon} 
+                    style={{ 
+                      color: 'white', 
+                      width: 20, 
+                      height: 20 
+                    }} 
+                  />
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  About {category}
+                </Typography>
+              </Box>
+              
+              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                This section provides articles about {category?.toLowerCase() || 'healthy eating'}, helping you understand key concepts and apply them to your health journey.
+              </Typography>
+              
+              <Button
+                variant="outlined"
+                fullWidth
+                sx={{ 
+                  mt: 2, 
+                  color: categoryData.color,
+                  borderColor: categoryData.color,
+                  '&:hover': {
+                    borderColor: categoryData.color,
+                    backgroundColor: alpha(categoryData.color, 0.1),
+                  }
+                }}
+                onClick={() => navigate('/education')}
+              >
+                Browse All {category || 'Articles'}
+              </Button>
+            </Paper>
+          </Box>
         </Grid>
-      </Container>
-    </Box>
+      </Grid>
+    </Container>
   );
 };
 
