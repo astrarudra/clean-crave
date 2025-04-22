@@ -1,14 +1,16 @@
 # Clean Crave - Healthy Living & Nutrition App
 
-![Clean Crave Logo](https://astrarudra.github.io/data/images/logo.png)
-
 Welcome to the official repository for Clean Crave, a comprehensive application dedicated to promoting healthy eating and nutrition education. This React-based application offers a rich interface for exploring nutritious recipes, educational content on healthy living, and a detailed food nutrition database.
 
-**Live Demo**: [Clean Crave App](https://astrarudra.github.io/clean-crave/)
+Data is hosted from repo - https://github.com/astrarudra/data
+Content is all AI Generated
+This is built for Outlier.ai Frontend Hackathon Contest.
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/a8e71262-b91c-4365-acf3-391578e162cb/deploy-status)](https://app.netlify.com/sites/cleancrave/deploys)
+**Live Demo**: [Clean Crave App](https://cleancrave.netlify.app/)
 
-![Screenshot of Clean Crave App](https://astrarudra.github.io/data/images/screenshot.jpg)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/bc64bad1-98f4-40ec-bb57-5c3a0e7bb9bf/deploy-status)](https://app.netlify.com/sites/cleancrave/deploys)
+
+![Screenshot of Clean Crave App](https://astrarudra.github.io/data/images/cleancrave-ss.jpg)
 
 ## About Clean Crave
 
@@ -58,28 +60,6 @@ Whether you're on a specific diet, trying to eat more healthfully, or simply cur
 ![Firefox](https://img.shields.io/badge/Firefox-FF7139?style=for-the-badge&logo=Firefox-Browser&logoColor=white)
 ![Edge](https://img.shields.io/badge/Edge-0078D7?style=for-the-badge&logo=Microsoft-edge&logoColor=white)
 
-## Project Structure
-
-```
-clean-crave/
-├── public/         # Static assets
-├── src/
-│   ├── assets/     # Static assets like images
-│   ├── components/ # Reusable UI components 
-│   │   ├── Home/   # Home page components
-│   │   ├── Recipe/ # Recipe related components
-│   │   ├── Education/ # Education related components
-│   │   └── ...     # Other component categories
-│   ├── hooks/      # Custom React hooks
-│   ├── pages/      # Page-level components
-│   ├── store/      # Zustand state management
-│   ├── theme/      # MUI theme configuration
-│   ├── utils/      # Utility functions
-│   ├── App.jsx     # Main application component
-│   └── main.jsx    # Application entry point
-├── index.html      # HTML entry point
-└── package.json    # Project dependencies
-```
 
 ## Getting Started
 
