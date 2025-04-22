@@ -10,7 +10,7 @@ This is built for Outlier.ai Frontend Hackathon Contest.
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/bc64bad1-98f4-40ec-bb57-5c3a0e7bb9bf/deploy-status)](https://app.netlify.com/sites/cleancrave/deploys)
 
-![Screenshot of Clean Crave App](https://astrarudra.github.io/data/images/cleancrave-ss.jpg)
+![Screenshot of Clean Crave App](https://astrarudra.github.io/data/images/cleancrave-ss.png)
 
 ## About Clean Crave
 
